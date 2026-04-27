@@ -1,0 +1,50 @@
+name: Daily Idiom
+
+on:
+  schedule:
+    # 09:00 МСК = 06:00 UTC
+    - cron: "0 6 * * *"
+  workflow_dispatch:  # ручной запуск из Actions UI
+
+# Нужно для коммита обновлённого history.json
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-idiom
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Post idiom of the day
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
+        run: python bot.py
+
+      - name: Commit updated history
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet history.json; then
+            echo "history.json не изменился, коммит не нужен"
+          else
+            git add history.json
+            git commit -m "chore: update history $(date -u +'%Y-%m-%d')"
+            git push
+          fi
