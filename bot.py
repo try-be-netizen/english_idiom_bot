@@ -128,9 +128,9 @@ def msk_now_iso() -> str:
 
 
 def main() -> None:
-    token = env("BOT_TOKEN")
-    channel_id = env("CHANNEL_ID")
-    admin_chat_id = env("ADMIN_CHAT_ID", required=False)
+    token = env("TELEGRAM_BOT_TOKEN")
+    channel_id = env("TELEGRAM_CHAT_ID")
+    admin_chat_id = env("TELEGRAM_ADMIN_CHAT_ID", required=False)
 
     idioms = load_idioms()
     history = load_history()
