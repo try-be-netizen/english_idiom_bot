@@ -1,9 +1,9 @@
 name: Daily Idiom
 
 on:
-  schedule:
+  #schedule:
     # 09:00 МСК = 06:00 UTC
-    - cron: "0 6 * * *"
+    #- cron: "0 6 * * *"
   workflow_dispatch:  # ручной запуск из Actions UI
 
 # Нужно для коммита обновлённого history.json
